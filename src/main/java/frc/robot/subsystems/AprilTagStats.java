@@ -14,7 +14,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 //import frc.robot.Constants;
 import frc.robot.Constants.cameraRotationConstants;
@@ -30,19 +32,26 @@ public class AprilTagStats extends SubsystemBase{
     //Positonal object representation of your camera on the robot
     Transform3d robotToCam = new Transform3d(new Translation3d(cameraTranslationConstants.tX, cameraTranslationConstants.tY, cameraTranslationConstants.tZ), new Rotation3d(cameraRotationConstants.rRoll, cameraRotationConstants.rPitch, cameraRotationConstants.rYaw));
     
-    double yaw, pitch, area;
-    int id;
+    private double yaw, pitch, ambiguity;
+    private int id;
+
+    private ShuffleboardTab tab = Shuffleboard.getTab("Vision");
+    private GenericEntry yawEntry, pitchEntry, idEntry, ambiguityEntry;
 
     public AprilTagStats() {
         //construction of a new pose estimator (not tested)
         //PhotonPoseEstimator estimator = new PhotonPoseEstimator(layout, PoseStrategy.CLOSEST_TO_LAST_POSE, cam1 ,robotToCam);
+        yawEntry = tab.add("yaw", yaw).getEntry();
+        pitchEntry = tab.add("pitch", pitch).getEntry();
+        idEntry = tab.add("id", id).getEntry();
+        ambiguityEntry = tab.add("ambiguity", ambiguity).getEntry();
     }
 
     public void Stats() {
         //check to see if the camera is stablely connected
         if(cam1.isConnected()) {
 
-            //gets the newest results from the camera
+           // gets the newest results from the camera
             var result = cam1.getLatestResult();
             
             if (result.hasTargets()) {
@@ -53,30 +62,31 @@ public class AprilTagStats extends SubsystemBase{
                 //pulls out yaw, pitch, area, and id of the located apriltag
                 yaw = target.getYaw();
                 pitch = target.getPitch();
-                area = target.getArea();
                 id = target.getFiducialId();
+                ambiguity = target.getPoseAmbiguity();
 
                 //pushes values to shuffleboard
-                updateView(yaw, pitch, area, id);
+                updateView(yaw, pitch, id, ambiguity);
 
                 //gets the transformation that maps the space between the camera and the tag 
-                Transform3d transform = target.getBestCameraToTarget();
+                //Transform3d transform = target.getBestCameraToTarget();
 
             }
-            System.out.println("connected");
+            //System.out.println("connected");
         }
         else {
             System.out.println("Not Connected");
         }
-        //updateView(yaw, pitch, area, id);
+        // updateView(yaw, pitch, area, id);
     }
 
-    public void updateView(double yaw, double pitch, double area, double id) {
+    public void updateView(double yaw, double pitch, int id, double ambiguity) {
         //pushes yaw, pitch, area, and id to ShuffleBoard (Meant for testing if values are being passed to variables)
-        Shuffleboard.getTab("Vision").add("yaw", yaw);
-        Shuffleboard.getTab("Vision").add("pitch", pitch);
-        Shuffleboard.getTab("Vision").add("area", area);
-        Shuffleboard.getTab("Vision").add("id", id);
+        yawEntry.setDouble(yaw);
+        pitchEntry.setDouble(pitch);
+        idEntry.setInteger(id);
+        ambiguityEntry.setDouble(ambiguity);
+        
     }
 
 }

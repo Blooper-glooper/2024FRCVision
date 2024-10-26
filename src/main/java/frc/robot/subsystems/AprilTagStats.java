@@ -67,7 +67,7 @@ public class AprilTagStats extends SubsystemBase{
                 updateView(yaw, pitch, id, ambiguity);
 
                 //gets the transformation that maps the space between the camera and the tag 
-                //Transform3d transform = target.getBestCameraToTarget();
+                Transform3d transform = target.getBestCameraToTarget();
 
                 //if an april tag is spotted, calculates and returns the 3d pose of the robot (robot relative to field including translation and rotation)
                 if (layout.getTagPose(target.getFiducialId()).isPresent()) {

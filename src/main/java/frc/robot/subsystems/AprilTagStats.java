@@ -50,7 +50,7 @@ public class AprilTagStats extends SubsystemBase{
         if(arduCam.isConnected()) {
 
             //gets the newest results from the camera
-            var result = cam1.getLatestResult();
+            var result = arduCam.getLatestResult();
             
             if (result.hasTargets()) {
 

@@ -31,8 +31,9 @@ public class AprilTagStats extends SubsystemBase{
     Transform3d robotToCam = new Transform3d(new Translation3d(cameraTranslationConstants.tX, cameraTranslationConstants.tY, cameraTranslationConstants.tZ), new Rotation3d(cameraRotationConstants.rRoll, cameraRotationConstants.rPitch, cameraRotationConstants.rYaw));
     PhotonPoseEstimator m_photonPoseEstimator;
 
-    double yaw, pitch, area;
-    int id;
+    private double yaw, pitch, ambiguity;
+    private int id;
+
     StructPublisher<Pose3d> arrPub;
 
     public AprilTagStats() {
@@ -43,7 +44,7 @@ public class AprilTagStats extends SubsystemBase{
     m_photonPoseEstimator.setReferencePose(new Pose3d(12.5, 5.5, 0, new Rotation3d()));
 
         //construction of a new pose estimator (not tested)
-        //PhotonPoseEstimator estimator = new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, arduCam, robotToCam);
+        //PhotonPoseEstimator estimator = new PhotonPoseEstimator(layout, PoseStrategy.CLOSEST_TO_LAST_POSE, cam1 ,robotToCam);
     }
 
     public void Stats() {
@@ -61,11 +62,11 @@ public class AprilTagStats extends SubsystemBase{
                 //pulls out yaw, pitch, area, and id of the located apriltag
                 yaw = target.getYaw();
                 pitch = target.getPitch();
-                area = target.getArea();
                 id = target.getFiducialId();
+                ambiguity = target.getPoseAmbiguity();
 
                 //pushes values to shuffleboard
-                updateView(yaw, pitch, area, id);
+                updateView(yaw, pitch, id, ambiguity);
 
                 //gets the transformation that maps the space between the camera and the tag 
                 Transform3d transform = target.getBestCameraToTarget();
@@ -77,19 +78,19 @@ public class AprilTagStats extends SubsystemBase{
                     arrPub.set(update.get().estimatedPose);
                 }
             }
-            System.out.println("connected");
+            //System.out.println("connected");
         }
         else {
             System.out.println("Not Connected");
         }
-        //updateView(yaw, pitch, area, id);
+        // updateView(yaw, pitch, area, id);
     }
 
-    public void updateView(double yaw, double pitch, double area, double id) {
+    public void updateView(double yaw, double pitch, int id, double ambiguity) {
         //pushes yaw, pitch, area, and id to ShuffleBoard (Meant for testing if values are being passed to variables)
         SmartDashboard.putNumber("yaw", yaw);
       SmartDashboard.putNumber("pitch",pitch);
-      SmartDashboard.putNumber("area", area);
+      SmartDashboard.putNumber("ambiguity", ambiguity);
       SmartDashboard.putNumber("id",id);
 
 

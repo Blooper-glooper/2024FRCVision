@@ -40,7 +40,7 @@ public class AprilTagStats extends SubsystemBase{
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
     NetworkTable table = inst.getTable("datatable");
     arrPub = table.getStructTopic("Pose", Pose3d.struct).publish();
-    m_photonPoseEstimator = new PhotonPoseEstimator(layout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, arduCam, new Transform3d());
+    m_photonPoseEstimator = new PhotonPoseEstimator(layout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, arduCam, robotToCam);
     m_photonPoseEstimator.setReferencePose(new Pose3d(12.5, 5.5, 0, new Rotation3d()));
 
         //construction of a new pose estimator (not tested)

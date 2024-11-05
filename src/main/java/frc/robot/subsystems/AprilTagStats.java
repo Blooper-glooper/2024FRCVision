@@ -70,12 +70,10 @@ public class AprilTagStats extends SubsystemBase{
 
                 //gets the transformation that maps the space between the camera and the tag 
                 Transform3d transform = target.getBestCameraToTarget();
-                var update = m_photonPoseEstimator.update();
                 //if an april tag is spotted, calculates and returns the 3d pose of the robot (robot relative to field including translation and rotation)
                 if (layout.getTagPose(target.getFiducialId()).isPresent()) {
                     Pose3d relativePose = relativeRobot(transform, target, robotToCam, layout);
-                    if (Math.abs(relativePose.getZ()) < 1) m_photonPoseEstimator.setReferencePose(update.get().estimatedPose);
-                    arrPub.set(update.get().estimatedPose);
+                    arrPub.set(relativePose);
                 }
             }
             //System.out.println("connected");

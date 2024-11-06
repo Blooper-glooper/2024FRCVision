@@ -3,9 +3,9 @@ package frc.robot;
 public final class Constants {
     public static class cameraTranslationConstants {
         //translation of camera in meters (change when camera has been mounted on robot)
-        public static final double tX = 0.0;
-        public static final double tY = 0.0;
-        public static final double tZ = 0.0;
+        public static final double tX = -32 * 0.01;
+        public static final double tY = 0.0 * 0.01;
+        public static final double tZ = 32 * 0.01;
     }
     public static class cameraRotationConstants {
         //rotation of camera (change when camera has been mounted on robot)
